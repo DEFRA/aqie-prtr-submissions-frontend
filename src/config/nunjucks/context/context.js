@@ -4,7 +4,11 @@ import { readFileSync } from 'node:fs'
 import { config } from '#/config/config.js'
 import { buildNavigation } from './build-navigation.js'
 import { createLogger } from '#/server/common/helpers/logging/logger.js'
-import { DEFAULT_LANG, translate } from '#/server/common/helpers/i18n.js'
+import {
+  DEFAULT_LANG,
+  hasMultipleLangs,
+  translate
+} from '#/server/common/helpers/i18n.js'
 
 const logger = createLogger()
 const assetPath = config.get('assetPath')
@@ -33,6 +37,7 @@ export function context(request) {
 
   return {
     lang,
+    showLanguageToggle: hasMultipleLangs,
     t: (key) => translate(lang, key),
     assetPath: `${assetPath}/assets`,
     serviceName: config.get('serviceName'),

@@ -60,9 +60,11 @@
 {% endblock %}
 
 {% block beforeContent %}
-  <p class="govuk-body govuk-!-text-align-right govuk-!-margin-bottom-0">
-    <a class="govuk-link govuk-link--no-visited-state" href="?lang={{ t('common.language.switchToLang') }}" lang="{{ t('common.language.switchToLang') }}" hreflang="{{ t('common.language.switchToLang') }}">{{ t('common.language.switchTo') }}</a>
-  </p>
+  {% if showLanguageToggle %}
+    <p class="govuk-body govuk-!-text-align-right govuk-!-margin-bottom-0">
+      <a class="govuk-link govuk-link--no-visited-state" href="?lang={{ t('common.language.switchToLang') }}" lang="{{ t('common.language.switchToLang') }}" hreflang="{{ t('common.language.switchToLang') }}">{{ t('common.language.switchTo') }}</a>
+    </p>
+  {% endif %}
   {% if breadcrumbs.length > 1 %}
     {{ govukBreadcrumbs({
       items: breadcrumbs
