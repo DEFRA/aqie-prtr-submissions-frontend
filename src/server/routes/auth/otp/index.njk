@@ -1,0 +1,53 @@
+{% extends 'layouts/page.njk' %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if errorText %}
+        {{ govukErrorSummary({
+          titleText: t('common.errorSummaryTitle'),
+          errorList: [{ text: errorText, href: "#otp" }]
+        }) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-xl">{{ t('auth.otp.title') }}</h1>
+      <p class="govuk-body">{{ t('auth.otp.intro') }}</p>
+      <p class="govuk-body">{{ t('auth.otp.delay') }}</p>
+      <p class="govuk-body">{{ t('auth.otp.noCodeIntro') }}</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>{{ t('auth.otp.noCodeStep1') }}</li>
+        <li>{{ t('auth.otp.noCodeStep2') }}</li>
+      </ul>
+
+      <form action="/sign-in/otp" method="post" novalidate>
+        <input type="hidden" name="crumb" value="{{ crumb }}">
+
+        {{ govukInput({
+          id: "otp",
+          name: "otp",
+          inputmode: "numeric",
+          autocomplete: "one-time-code",
+          spellcheck: false,
+          classes: "govuk-input--width-10",
+          label: {
+            text: t('auth.otp.label'),
+            classes: "govuk-label--m"
+          },
+          errorMessage: { text: errorText } if errorText
+        }) }}
+
+        {{ govukDetails({
+          summaryText: t('auth.otp.notArrived.summary'),
+          html: '<p class="govuk-body">' + t('auth.otp.notArrived.text') | escape + '</p><p class="govuk-body"><a class="govuk-link" href="/sign-in">' + t('auth.otp.changeEmail') | escape + '</a></p>'
+        }) }}
+
+        {{ govukButton({ text: t('auth.otp.button'), preventDoubleClick: true }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}
