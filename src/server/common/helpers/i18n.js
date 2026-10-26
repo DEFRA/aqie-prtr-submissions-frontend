@@ -1,0 +1,52 @@
+import { readdirSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+
+export const DEFAULT_LANG = 'en'
+export const SUPPORTED_LANGS = ['en', 'cy']
+
+const serverDir = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../..'
+)
+const routesDir = path.join(serverDir, 'routes')
+
+// routes/address-book/email/content.js -> namespace 'address-book.email'
+const namespaceOf = (file) =>
+  path.dirname(path.relative(routesDir, file)).split(path.sep).join('.')
+
+const contentFiles = readdirSync(routesDir, {
+  recursive: true,
+  withFileTypes: true
+})
+  .filter((entry) => entry.isFile() && entry.name === 'content.js')
+  .map((entry) => path.join(entry.parentPath, entry.name))
+
+// Each content.js exports { en, cy }; shared text lives in server/common/content.js.
+const sources = [
+  { namespace: 'common', file: path.join(serverDir, 'common/content.js') },
+  ...contentFiles.map((file) => ({ namespace: namespaceOf(file), file }))
+]
+
+const messages = Object.fromEntries(SUPPORTED_LANGS.map((lang) => [lang, {}]))
+
+for (const { namespace, file } of sources) {
+  const { content } = await import(pathToFileURL(file).href)
+  for (const lang of SUPPORTED_LANGS) {
+    messages[lang][namespace] = content[lang]
+  }
+}
+
+const lookup = (dict, key) =>
+  key.split('.').reduce((node, part) => node?.[part], dict)
+
+export function isSupportedLang(lang) {
+  return SUPPORTED_LANGS.includes(lang)
+}
+
+// Falls back to English, then to the key itself.
+export function translate(lang, key) {
+  const value =
+    lookup(messages[lang], key) ?? lookup(messages[DEFAULT_LANG], key)
+  return typeof value === 'string' ? value : key
+}
