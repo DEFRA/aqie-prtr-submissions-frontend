@@ -5,10 +5,5 @@ export const content = {
       switchToLang: 'cy'
     }
   },
-  cy: {
-    language: {
-      switchTo: 'English',
-      switchToLang: 'en'
-    }
-  }
+  cy: {}
 }

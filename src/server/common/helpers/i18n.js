@@ -22,7 +22,7 @@ const contentFiles = readdirSync(routesDir, {
   .filter((entry) => entry.isFile() && entry.name === 'content.js')
   .map((entry) => path.join(entry.parentPath, entry.name))
 
-// Each content.js exports { en, cy }; shared text lives in server/common/content.js.
+// Each content.js exports { en, cy? }; shared text lives in server/common/content.js.
 const sources = [
   { namespace: 'common', file: path.join(serverDir, 'common/content.js') },
   ...contentFiles.map((file) => ({ namespace: namespaceOf(file), file }))
@@ -37,12 +37,23 @@ for (const { namespace, file } of sources) {
   }
 }
 
+// A language is only offered once at least one content file provides it.
+const availableLangs = SUPPORTED_LANGS.filter(
+  (lang) =>
+    lang === DEFAULT_LANG ||
+    Object.values(messages[lang]).some(
+      (value) => value && Object.keys(value).length > 0
+    )
+)
+
 const lookup = (dict, key) =>
   key.split('.').reduce((node, part) => node?.[part], dict)
 
 export function isSupportedLang(lang) {
-  return SUPPORTED_LANGS.includes(lang)
+  return availableLangs.includes(lang)
 }
+
+export const hasMultipleLangs = availableLangs.length > 1
 
 // Falls back to English, then to the key itself.
 export function translate(lang, key) {
