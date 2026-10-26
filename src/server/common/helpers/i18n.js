@@ -30,20 +30,30 @@ const sources = [
 
 const messages = Object.fromEntries(SUPPORTED_LANGS.map((lang) => [lang, {}]))
 
+// 'auth.email' -> messages[lang].auth.email, matching how translate() walks keys.
+function setNested(root, namespace, value) {
+  const parts = namespace.split('.')
+  const last = parts.pop()
+  const parent = parts.reduce((node, part) => (node[part] ??= {}), root)
+  parent[last] = value
+}
+
 for (const { namespace, file } of sources) {
   const { content } = await import(pathToFileURL(file).href)
   for (const lang of SUPPORTED_LANGS) {
-    messages[lang][namespace] = content[lang]
+    setNested(messages[lang], namespace, content[lang])
   }
 }
 
-// A language is only offered once at least one content file provides it.
+// A language is only offered once at least one content file provides a string for it.
+const hasStrings = (node) =>
+  typeof node === 'string' ||
+  (node !== null &&
+    typeof node === 'object' &&
+    Object.values(node).some(hasStrings))
+
 const availableLangs = SUPPORTED_LANGS.filter(
-  (lang) =>
-    lang === DEFAULT_LANG ||
-    Object.values(messages[lang]).some(
-      (value) => value && Object.keys(value).length > 0
-    )
+  (lang) => lang === DEFAULT_LANG || hasStrings(messages[lang])
 )
 
 const lookup = (dict, key) =>
