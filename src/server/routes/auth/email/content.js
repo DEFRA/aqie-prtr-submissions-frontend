@@ -16,7 +16,8 @@ export const content = {
       required: ENTER_EMAIL,
       invalid:
         'Enter an email address in the correct format, like name@example.com',
-      sendFailed: 'We could not send a passcode. Try again.'
+      sendFailed: 'We could not send a passcode. Try again.',
+      tooManyRequests: 'Wait a minute before requesting another passcode'
     }
   },
   cy: {}

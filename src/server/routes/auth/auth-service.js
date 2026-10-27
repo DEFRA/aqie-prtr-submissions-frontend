@@ -1,28 +1,34 @@
 import { config } from '#/config/config.js'
 
-// Placeholder for the backend auth API. Replace the bodies with real HTTP calls.
-const STUB_OTP = '123456'
-
-function assertStubAllowed() {
-  if (config.get('isProduction')) {
-    throw new Error('Auth API is not implemented')
+export class AuthApiError extends Error {
+  constructor(path, status) {
+    super(`Backend ${path} responded ${status}`)
+    this.name = 'AuthApiError'
+    this.status = status
   }
 }
 
-/**
- * Ask the backend to email a one-time passcode.
- * TODO: POST <backend>/auth/otp/send { email }
- */
-export async function sendOtp(_email) {
-  assertStubAllowed()
-  return { sent: true }
+async function post(path, body) {
+  const response = await fetch(`${config.get('backendApi.url')}${path}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(config.get('backendApi.timeoutMs'))
+  })
+
+  if (!response.ok) {
+    throw new AuthApiError(path, response.status)
+  }
+  return response
 }
 
-/**
- * Ask the backend to verify a one-time passcode.
- * TODO: POST <backend>/auth/otp/verify { email, otp }
- */
-export async function verifyOtp(_email, otp) {
-  assertStubAllowed()
-  return { valid: otp === STUB_OTP }
+/** Asks the backend to email a one-time passcode. Throws AuthApiError (429 = resend cooldown). */
+export async function sendOtp(email) {
+  await post('/auth/otp/send', { email })
+}
+
+/** Asks the backend to check a passcode. Resolves { valid }; throws AuthApiError (429 = locked). */
+export async function verifyOtp(email, otp) {
+  const response = await post('/auth/otp/verify', { email, otp })
+  return response.json()
 }
