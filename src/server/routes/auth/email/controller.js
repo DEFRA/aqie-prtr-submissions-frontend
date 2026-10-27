@@ -44,7 +44,10 @@ export const emailSubmitController = {
       await sendOtp(email)
     } catch (err) {
       request.logger.error(err, 'Failed to send OTP')
-      return renderEmailPage(h, lang, { email, errorKey: 'sendFailed' })
+      return renderEmailPage(h, lang, {
+        email,
+        errorKey: err.status === 429 ? 'tooManyRequests' : 'sendFailed'
+      })
     }
 
     setAuthSession(request, { email, authenticated: false })

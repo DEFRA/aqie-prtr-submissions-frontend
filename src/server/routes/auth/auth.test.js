@@ -13,6 +13,23 @@ describe('#auth sign-in journey', () => {
     await server.stop({ timeout: 0 })
   })
 
+  const mockFetch = vi.fn()
+
+  // Stands in for the backend: any email is accepted and only 123456 verifies.
+  beforeEach(() => {
+    mockFetch.mockReset()
+    mockFetch.mockImplementation(async (url, init) =>
+      url.endsWith('/auth/otp/send')
+        ? new Response(null, { status: 204 })
+        : Response.json({ valid: JSON.parse(init.body).otp === '123456' })
+    )
+    vi.stubGlobal('fetch', mockFetch)
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   // Crumb needs the cookie from a GET and the token from the rendered form.
   async function getPage(url, cookie) {
     const response = await server.inject({
@@ -72,6 +89,13 @@ describe('#auth sign-in journey', () => {
     )
     expect(emailPost.statusCode).toBe(302)
     expect(emailPost.headers.location).toBe('/sign-in/otp')
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringMatching(/\/auth\/otp\/send$/),
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ email: 'user@example.com' })
+      })
+    )
 
     const sessionCookie = [emailPage.cookie, emailPost.headers['set-cookie']]
       .flat()
@@ -102,5 +126,55 @@ describe('#auth sign-in journey', () => {
     )
     expect(right.statusCode).toBe(302)
     expect(right.headers.location).toBe('/')
+  })
+
+  async function signInWithEmail(email = 'user@example.com') {
+    const emailPage = await getPage('/sign-in')
+    const emailPost = await post('/sign-in', { email }, emailPage)
+    const cookie = [emailPage.cookie, emailPost.headers['set-cookie']]
+      .flat()
+      .filter(Boolean)
+      .map((c) => c.split(';')[0])
+      .join('; ')
+    const otpPage = await getPage('/sign-in/otp', cookie)
+    return { crumb: otpPage.crumb, cookie }
+  }
+
+  test('shows an error and stays on the email page when sending fails', async () => {
+    mockFetch.mockResolvedValueOnce(new Response(null, { status: 502 }))
+
+    const page = await getPage('/sign-in')
+    const response = await post('/sign-in', { email: 'user@example.com' }, page)
+
+    expect(response.statusCode).toBe(statusCodes.ok)
+    expect(response.payload).toContain('We could not send a passcode')
+  })
+
+  test('tells the user to wait when the backend is rate limiting', async () => {
+    mockFetch.mockResolvedValueOnce(new Response(null, { status: 429 }))
+
+    const page = await getPage('/sign-in')
+    const response = await post('/sign-in', { email: 'user@example.com' }, page)
+
+    expect(response.payload).toContain('Wait a minute')
+  })
+
+  test('shows a lock-out message when the backend returns 429 on verify', async () => {
+    const session = await signInWithEmail()
+    mockFetch.mockResolvedValueOnce(new Response(null, { status: 429 }))
+
+    const response = await post('/sign-in/otp', { otp: '000000' }, session)
+
+    expect(response.payload).toContain('too many incorrect passcodes')
+  })
+
+  test('shows an error when the backend is unreachable during verify', async () => {
+    const session = await signInWithEmail()
+    mockFetch.mockRejectedValueOnce(new Error('connect ECONNREFUSED'))
+
+    const response = await post('/sign-in/otp', { otp: '123456' }, session)
+
+    expect(response.statusCode).toBe(statusCodes.ok)
+    expect(response.payload).toContain('We could not check your passcode')
   })
 })

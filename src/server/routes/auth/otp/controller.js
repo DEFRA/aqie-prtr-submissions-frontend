@@ -44,7 +44,19 @@ export const otpSubmitController = {
       return renderOtpPage(h, lang, email, 'invalid')
     }
 
-    const { valid } = await verifyOtp(email, otp)
+    let valid
+    try {
+      ;({ valid } = await verifyOtp(email, otp))
+    } catch (err) {
+      request.logger.error(err, 'Failed to verify OTP')
+      return renderOtpPage(
+        h,
+        lang,
+        email,
+        err.status === 429 ? 'tooManyAttempts' : 'verifyFailed'
+      )
+    }
+
     if (!valid) {
       return renderOtpPage(h, lang, email, 'incorrect')
     }

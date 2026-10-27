@@ -17,7 +17,10 @@ export const content = {
     errors: {
       required: 'Enter the 6-digit passcode',
       invalid: 'The passcode must be 6 digits',
-      incorrect: 'The passcode is not correct or has expired'
+      incorrect: 'The passcode is not correct or has expired',
+      tooManyAttempts:
+        'You have entered too many incorrect passcodes. Request a new one',
+      verifyFailed: 'We could not check your passcode. Try again.'
     }
   },
   cy: {}
