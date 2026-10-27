@@ -46,5 +46,4 @@ jobs:
           - name: SonarCloud Scan
             if: github.actor != 'dependabot[bot]' && env.SONAR_TOKEN != ''
             uses: SonarSource/sonarqube-scan-action@v6.0.0 #  (or check latest version on https://github.com/marketplace/actions/official-sonarqube-scan)
-
             
