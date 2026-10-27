@@ -24,6 +24,9 @@ jobs:
     if: github.run_number != 1
     name: CDP-build-workflow
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -43,9 +46,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: SonarCloud Scan
-#        uses: SonarSource/sonarqube-scan-action@v5.3.1 #  (or check latest version on https://github.com/marketplace/actions/official-sonarqube-scan)
-#        continue-on-error: true
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6.0.0 #  (or check latest version on https://github.com/marketplace/actions/official-sonarqube-scan)
+        continue-on-error: true
+        
