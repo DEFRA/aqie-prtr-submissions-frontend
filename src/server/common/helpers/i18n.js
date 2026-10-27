@@ -38,8 +38,14 @@ function setNested(root, namespace, value) {
   parent[last] = value
 }
 
-for (const { namespace, file } of sources) {
-  const { content } = await import(pathToFileURL(file).href)
+const loaded = await Promise.all(
+  sources.map(async ({ namespace, file }) => ({
+    namespace,
+    content: (await import(pathToFileURL(file).href)).content
+  }))
+)
+
+for (const { namespace, content } of loaded) {
   for (const lang of SUPPORTED_LANGS) {
     setNested(messages[lang], namespace, content[lang])
   }
