@@ -8,6 +8,7 @@
 {% from "heading/macro.njk" import appHeading %}
 
 {% set mainClasses = "app-main-wrapper" %}
+{% set htmlLang = lang %}
 
 {% block headIcons %}
   <link rel="icon" sizes="48x48" href="{{ getAssetPath("node_modules/govuk-frontend/dist/govuk/assets/images/favicon.ico") }}">
@@ -59,6 +60,11 @@
 {% endblock %}
 
 {% block beforeContent %}
+  {% if showLanguageToggle %}
+    <p class="govuk-body govuk-!-text-align-right govuk-!-margin-bottom-0">
+      <a class="govuk-link govuk-link--no-visited-state" href="?lang={{ t('common.language.switchToLang') }}" lang="{{ t('common.language.switchToLang') }}" hreflang="{{ t('common.language.switchToLang') }}">{{ t('common.language.switchTo') }}</a>
+    </p>
+  {% endif %}
   {% if breadcrumbs.length > 1 %}
     {{ govukBreadcrumbs({
       items: breadcrumbs
