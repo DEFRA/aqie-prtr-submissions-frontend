@@ -24,6 +24,11 @@ if (!googleTagManagerKey && config.get('isProduction')) {
 
 let viteManifest
 
+const languageOptions = [
+  { code: 'en-GB', text: 'English' },
+  { code: 'cy', text: 'Cymraeg' }
+]
+
 export function context(request) {
   if (config.get('isProduction') && !viteManifest) {
     try {
@@ -33,12 +38,14 @@ export function context(request) {
     }
   }
 
-  const lang = request?.app?.lang ?? DEFAULT_LANG
+  const language = request?.app?.language ?? DEFAULT_LANG
 
   return {
-    lang,
-    showLanguageToggle: hasMultipleLangs,
-    t: (key) => translate(lang, key),
+    language,
+    // Empty until Welsh content exists, which hides the switch link
+    languageOptions: hasMultipleLangs ? languageOptions : [],
+    currentLanguage: language,
+    t: (key) => translate(language, key),
     assetPath: `${assetPath}/assets`,
     serviceName: config.get('serviceName'),
     serviceUrl: '/',

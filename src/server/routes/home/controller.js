@@ -6,7 +6,7 @@ import { translate } from '#/server/common/helpers/i18n.js'
  */
 export const homeController = {
   handler(request, h) {
-    const title = translate(request.app.lang, 'home.title')
+    const title = translate(request.app.language, 'home.title')
 
     return h.view('home/index', {
       pageTitle: title,

@@ -1,6 +1,8 @@
 export const content = {
-  en: {
+  'en-GB': {
     title: 'Home'
   },
-  cy: {}
+  cy: {
+    title: 'Hafan'
+  }
 }
