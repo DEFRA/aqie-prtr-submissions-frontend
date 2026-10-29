@@ -8,6 +8,7 @@
 {% from "heading/macro.njk" import appHeading %}
 
 {% set mainClasses = "app-main-wrapper" %}
+{% set htmlLang = language %}
 
 {% block headIcons %}
   <link rel="icon" sizes="48x48" href="{{ getAssetPath("node_modules/govuk-frontend/dist/govuk/assets/images/favicon.ico") }}">
@@ -49,8 +50,20 @@
     useTudorCrown: true
   }) }}
 
+  {# Offers the language not currently shown, pinned to the right of the service navigation bar #}
+  {% set languageLinkHtml %}
+    {% for option in languageOptions %}
+      {% if option.code != currentLanguage %}
+        <a class="govuk-link govuk-link--no-visited-state" href="?language={{ option.code }}" lang="{{ option.code }}" hreflang="{{ option.code }}">{{ option.text }}</a>
+      {% endif %}
+    {% endfor %}
+  {% endset %}
+
   {{ govukServiceNavigation({
-    navigation: navigation
+    navigation: navigation,
+    slots: {
+      end: { html: languageLinkHtml, align: 'inline' } if languageLinkHtml | trim
+    }
   }) }}
 {% endblock %}
 
