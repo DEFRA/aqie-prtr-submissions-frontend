@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 export const DEFAULT_LANG = 'en-GB'
 export const SUPPORTED_LANGS = ['en-GB', 'cy']
+export const LANGUAGE_SESSION_KEY = 'language'
 
 const serverDir = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -65,7 +66,18 @@ export function isSupportedLang(language) {
   return availableLangs.includes(language)
 }
 
-export const hasMultipleLangs = availableLangs.length > 1
+const LANGUAGE_LABELS = { 'en-GB': 'English', cy: 'Cymraeg' }
+
+/**
+ * Options for the language switch. `allowed` limits them to what a module supports;
+ * the switch is only offered when at least two languages remain.
+ */
+export function languageOptionsFor(allowed = SUPPORTED_LANGS) {
+  const offered = allowed.filter(isSupportedLang)
+  return offered.length > 1
+    ? offered.map((code) => ({ code, text: LANGUAGE_LABELS[code] }))
+    : []
+}
 
 // Falls back to English, then to the key itself.
 export function translate(language, key) {

@@ -1,4 +1,10 @@
 export const content = {
-  'en-GB': {},
-  cy: {}
+  'en-GB': {
+    errorSummaryTitle: 'There is a problem',
+    signOut: 'Sign out'
+  },
+  cy: {
+    errorSummaryTitle: 'Mae problem',
+    signOut: 'Allgofnodi'
+  }
 }

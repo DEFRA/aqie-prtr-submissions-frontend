@@ -59,10 +59,26 @@
     {% endfor %}
   {% endset %}
 
+  {# Sign out sits next to the language link, only while signed in to this page's module #}
+  {% set signOutHtml %}
+    {% if signOut %}
+      <form action="{{ signOut.action }}" method="post" class="app-service-navigation-end__form">
+        <input type="hidden" name="crumb" value="{{ crumb }}">
+        <button type="submit" class="govuk-link govuk-link--no-visited-state app-link-button">{{ signOut.text }}</button>
+      </form>
+    {% endif %}
+  {% endset %}
+
+  {% set serviceNavigationEndHtml %}
+    {% if (languageLinkHtml | trim) or (signOutHtml | trim) %}
+      <div class="app-service-navigation-end">{{ languageLinkHtml | safe }}{{ signOutHtml | safe }}</div>
+    {% endif %}
+  {% endset %}
+
   {{ govukServiceNavigation({
     navigation: navigation,
     slots: {
-      end: { html: languageLinkHtml, align: 'inline' } if languageLinkHtml | trim
+      end: { html: serviceNavigationEndHtml, align: 'inline' } if serviceNavigationEndHtml | trim
     }
   }) }}
 {% endblock %}

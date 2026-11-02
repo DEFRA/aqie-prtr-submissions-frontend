@@ -17,6 +17,7 @@ import { metrics } from '@defra/cdp-metrics'
 import { cookieConsent } from '#/server/plugins/cookie-consent.js'
 import { csrf } from '#/server/plugins/csrf.js'
 import { languageSelection } from '#/server/plugins/language-selection.js'
+import { moduleAuth } from '#/server/plugins/module-auth.js'
 
 export async function createServer() {
   const server = hapi.server({
@@ -68,6 +69,7 @@ export async function createServer() {
     csrf,
     cookieConsent,
     languageSelection,
+    moduleAuth,
     router // Register all the controllers/routes defined in src/server/router.js
   ])
 

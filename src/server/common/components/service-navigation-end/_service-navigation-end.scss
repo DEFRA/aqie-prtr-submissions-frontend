@@ -1,0 +1,22 @@
+@use "govuk-frontend" as *;
+
+// Language link and sign-out button, pinned to the right of the service navigation bar
+.app-service-navigation-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: govuk-spacing(4);
+}
+
+.app-service-navigation-end__form {
+  margin: 0;
+}
+
+// A button that looks like a link, so sign-out can be a POST
+.app-link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}

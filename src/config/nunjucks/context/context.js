@@ -6,9 +6,14 @@ import { buildNavigation } from './build-navigation.js'
 import { createLogger } from '#/server/common/helpers/logging/logger.js'
 import {
   DEFAULT_LANG,
-  hasMultipleLangs,
+  languageOptionsFor,
   translate
 } from '#/server/common/helpers/i18n.js'
+import { getModuleName } from '#/config/modules.js'
+import {
+  isAuthenticated,
+  signOutPath
+} from '#/server/routes/login/auth-session.js'
 
 const logger = createLogger()
 const assetPath = config.get('assetPath')
@@ -24,11 +29,6 @@ if (!googleTagManagerKey && config.get('isProduction')) {
 
 let viteManifest
 
-const languageOptions = [
-  { code: 'en-GB', text: 'English' },
-  { code: 'cy', text: 'Cymraeg' }
-]
-
 export function context(request) {
   if (config.get('isProduction') && !viteManifest) {
     try {
@@ -39,11 +39,21 @@ export function context(request) {
   }
 
   const language = request?.app?.language ?? DEFAULT_LANG
+  const moduleName = request?.path ? getModuleName(request.path) : undefined
+  const signedIn =
+    moduleName && request.yar && isAuthenticated(request, moduleName)
 
   return {
     language,
-    // Empty until Welsh content exists, which hides the switch link
-    languageOptions: hasMultipleLangs ? languageOptions : [],
+    // Only set while the user is signed in to the module of the current page
+    signOut: signedIn
+      ? {
+          action: signOutPath(moduleName),
+          text: translate(language, 'common.signOut')
+        }
+      : undefined,
+    // Empty when the page offers only one language, which hides the switch link
+    languageOptions: request?.app?.languageOptions ?? languageOptionsFor(),
     currentLanguage: language,
     t: (key) => translate(language, key),
     assetPath: `${assetPath}/assets`,

@@ -1,7 +1,9 @@
 import inert from '@hapi/inert'
 
-import { home } from '../routes/home/index.js'
-import { about } from '../routes/about/index.js'
+import { login } from '../routes/login/index.js'
+import { addressBookAboutYou } from '../routes/address-book/about-you/index.js'
+import { pollutantDataCollectionFacilities } from '../routes/pollutant-data-collection/facilities/index.js'
+import { nrduUploadPollutantReleaseData } from '../routes/nrdu/upload-pollutant-release-data/index.js'
 import { health } from '../routes/health/index.js'
 import { cookies } from '../routes/cookies/controller.js'
 import { serveStaticFiles } from './serve-static-files.js'
@@ -17,8 +19,13 @@ export const router = {
       // Cookie consent & policy page
       await server.register([cookies])
 
-      // Application specific routes, add your own routes here
-      await server.register([home, about])
+      // Sign-in pages for every module, then the landing pages shown after sign-in
+      await server.register([login])
+      await server.register([
+        addressBookAboutYou,
+        pollutantDataCollectionFacilities,
+        nrduUploadPollutantReleaseData
+      ])
 
       // Static assets
       if (!config.get('isProduction') && !config.get('isTest')) {

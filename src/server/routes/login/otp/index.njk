@@ -1,0 +1,53 @@
+{% extends 'layouts/page.njk' %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if errorText %}
+        {{ govukErrorSummary({
+          titleText: t('common.errorSummaryTitle'),
+          errorList: [{ text: errorText, href: "#otp" }]
+        }) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-xl">{{ text.title }}</h1>
+      <p class="govuk-body">{{ text.intro }}</p>
+      <p class="govuk-body">{{ text.delay }}</p>
+      <p class="govuk-body">{{ text.noCodeIntro }}</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>{{ text.noCodeStep1 }}</li>
+        <li>{{ text.noCodeStep2 }}</li>
+      </ul>
+
+      <form action="{{ formAction }}" method="post" novalidate>
+        <input type="hidden" name="crumb" value="{{ crumb }}">
+
+        {{ govukInput({
+          id: "otp",
+          name: "otp",
+          inputmode: "numeric",
+          autocomplete: "one-time-code",
+          spellcheck: false,
+          classes: "govuk-input--width-10",
+          label: {
+            text: text.label,
+            classes: "govuk-label--m"
+          },
+          errorMessage: { text: errorText } if errorText
+        }) }}
+
+        {{ govukDetails({
+          summaryText: text.notArrivedSummary,
+          html: '<p class="govuk-body">' + text.notArrivedText | escape + '</p><p class="govuk-body"><a class="govuk-link" href="' + changeEmailHref | escape + '">' + text.changeEmail | escape + '</a></p>'
+        }) }}
+
+        {{ govukButton({ text: text.button, preventDoubleClick: true }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

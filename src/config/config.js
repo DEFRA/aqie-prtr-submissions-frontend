@@ -215,6 +215,20 @@ export const config = convict({
       env: 'TRACING_HEADER'
     }
   },
+  backendApi: {
+    url: {
+      doc: 'Base URL of aqie-prtr-submissions-backend',
+      format: String,
+      default: 'http://localhost:3001',
+      env: 'BACKEND_API_URL'
+    },
+    timeoutMs: {
+      doc: 'Timeout for backend API calls in milliseconds',
+      format: 'nat',
+      default: 10000,
+      env: 'BACKEND_API_TIMEOUT_MS'
+    }
+  },
   cookieConsent: {
     name: {
       doc: 'Name of cookie that stores the user consent preference',
