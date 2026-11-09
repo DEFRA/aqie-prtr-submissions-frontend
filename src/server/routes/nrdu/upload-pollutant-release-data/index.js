@@ -1,4 +1,8 @@
-import { uploadPollutantReleaseDataController } from './controller.js'
+import {
+  uploadPollutantReleaseDataController,
+  uploadReceivedController,
+  uploadStatusController
+} from './controller.js'
 
 export const nrduUploadPollutantReleaseData = {
   plugin: {
@@ -10,6 +14,18 @@ export const nrduUploadPollutantReleaseData = {
           path: '/nrdu/upload-pollutant-release-data',
           options: { app: { module: 'nrdu', requiresAuth: true } },
           ...uploadPollutantReleaseDataController
+        },
+        {
+          method: 'GET',
+          path: '/nrdu/upload-received',
+          options: { app: { module: 'nrdu', requiresAuth: true } },
+          ...uploadReceivedController
+        },
+        {
+          method: 'GET',
+          path: '/nrdu/upload-status/{uploadId}',
+          options: { app: { module: 'nrdu', requiresAuth: true } },
+          ...uploadStatusController
         }
       ])
     }

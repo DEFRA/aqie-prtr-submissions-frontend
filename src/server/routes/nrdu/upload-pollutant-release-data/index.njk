@@ -5,4 +5,61 @@
     text: heading,
     caption: caption
   }) }}
+
+  {% if statusPage %}
+    <div class="govuk-panel govuk-panel--confirmation">
+      <h2 class="govuk-panel__title">Upload received</h2>
+      <div class="govuk-panel__body">
+        Your file is being checked for viruses.
+      </div>
+    </div>
+
+    <p id="upload-status-text" class="govuk-body">Checking upload status…</p>
+
+    <script>
+      const uploadId = '{{ uploadId }}'
+      const statusPath = uploadId ? `/nrdu/upload-status/${uploadId}` : '/nrdu/upload-pollutant-release-data'
+
+      async function refreshStatus() {
+        if (!uploadId) {
+          return
+        }
+
+        const response = await fetch(statusPath)
+        const data = response.ok ? await response.json() : { upload: { status: 'unknown' } }
+        const status = data.upload?.status || data.upload?.uploadStatus || 'pending'
+        const text = document.getElementById('upload-status-text')
+
+        if (status === 'pending') {
+          text.textContent = 'Checking upload status…'
+          return
+        }
+
+        text.textContent = `Upload status: ${status}`
+      }
+
+      refreshStatus()
+      setInterval(refreshStatus, 3000)
+    </script>
+  {% elif uploadError %}
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert">
+      <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+      <div class="govuk-error-summary__body">
+        <p>{{ uploadError }}</p>
+      </div>
+    </div>
+  {% elif uploadUrl %}
+    <form action="{{ uploadUrl }}" method="post" enctype="multipart/form-data" novalidate>
+      <div class="govuk-form-group">
+        <label class="govuk-label govuk-label--m" for="file">
+          Upload your pollutant release data file
+        </label>
+        <input class="govuk-file-upload" id="file" name="file" type="file" />
+      </div>
+
+      <button type="submit" class="govuk-button">Upload file</button>
+    </form>
+  {% else %}
+    <p class="govuk-body">We are preparing your upload page. Please try again in a moment.</p>
+  {% endif %}
 {% endblock %}
