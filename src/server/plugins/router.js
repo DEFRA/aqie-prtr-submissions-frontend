@@ -1,7 +1,5 @@
 import inert from '@hapi/inert'
 
-import { home } from '../routes/home/index.js'
-import { about } from '../routes/about/index.js'
 import { health } from '../routes/health/index.js'
 import { cookies } from '../routes/cookies/controller.js'
 import { serveStaticFiles } from './serve-static-files.js'
@@ -16,9 +14,6 @@ export const router = {
       await server.register([health])
       // Cookie consent & policy page
       await server.register([cookies])
-
-      // Application specific routes, add your own routes here
-      await server.register([home, about])
 
       // Static assets
       if (!config.get('isProduction') && !config.get('isTest')) {
