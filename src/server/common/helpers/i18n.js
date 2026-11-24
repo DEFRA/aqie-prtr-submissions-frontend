@@ -11,7 +11,7 @@ const serverDir = path.resolve(
 )
 const routesDir = path.join(serverDir, 'routes')
 
-// routes/operator-data-collection/facilities/content.js -> namespace 'operator-data-collection.facilities'
+// routes/operators/facilities/content.js -> namespace 'operators.facilities'
 const namespaceOf = (file) =>
   path.dirname(path.relative(routesDir, file)).split(path.sep).join('.')
 

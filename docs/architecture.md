@@ -16,15 +16,15 @@ The Pollutant Release and Transfer Register (PRTR) service lets operators and re
 
 | # | Module | URL prefix (proposed) | Users | Purpose | Welsh |
 |---|---|---|---|---|---|
-| 1 | **Operator data collection** | `/operator-data-collection` | operators | Collect pollutant and waste data from operators (built mostly with Defra forms) | **Yes** |
-| 2 | **National Regulator data collection** | `/national-regulator-data-collection` | national regulators | Collect data from national regulators (built mostly with Defra forms) | No |
+| 1 | **Operator data collection** | `/operators` | operators | Collect pollutant and waste data from operators (built mostly with Defra forms) | **Yes** |
+| 2 | **National Regulator data collection** | `/national-regulators` | national regulators | Collect data from national regulators (built mostly with Defra forms) | No |
 
 The URL prefixes are proposals and need confirming. The Welsh setting for module 2 is an assumption (internal users, English only) and needs confirming. The detailed scope of module 2 is still to be defined.
 
 Key points:
 
 - **One frontend serves both modules.**
-- **Modules are separated by URL.** The first part of the URL (`/operator-data-collection/...`) identifies the module. It decides the landing page and the language rules.
+- **Modules are separated by URL.** The first part of the URL (`/operators/...`) identifies the module. It decides the landing page and the language rules.
 - **Only the Operator data collection module is in Welsh.** The National Regulator data collection module stays in English.
 - **Authentication is deferred.** The sign-in flow is still in discussion (a magic link for every user is being considered). It is not designed or built now, but `GET/POST /<module>/sign-in` stays in scope for the future (section 6).
 - **Built on Defra's Core Delivery Platform (CDP)** with the standard Defra Node.js stack, GOV.UK Frontend and Redis.
@@ -113,7 +113,7 @@ The service runs on Defra's **Core Delivery Platform (CDP)**.
 |---|---|---|
 | D1 | One **server-rendered frontend** shared by both modules | Follows the CDP pattern. Pages work without client-side JavaScript, as the GOV.UK service standard expects |
 | D2 | **GOV.UK Frontend / Design System** for all pages | Accessible, consistent, familiar to users |
-| D3 | The **module is the first URL segment** (for example `/operator-data-collection`), looked up in one **module registry** | One simple rule drives the landing page and the language. Adding a module is a registry entry |
+| D3 | The **module is the first URL segment** (for example `/operators`), looked up in one **module registry** | One simple rule drives the landing page and the language. Adding a module is a registry entry |
 | D4 | **Two modules for now**: Operator data collection and National Regulator data collection. More modules will be added later | Agreed scope |
 | D5 | **Authentication is deferred.** The sign-in flow is not designed or built now. `GET/POST /<module>/sign-in` stays in scope for the future | The flow (a magic link for every user) is still in discussion. The URL shape is kept so modules do not need to change later |
 | D6 | **Language rules per module** (English `en-GB` and Welsh `cy`) | Only the Operator data collection module needs Welsh. The others stay English |
@@ -162,13 +162,13 @@ The registry is the single place that describes the modules. Only the frontend n
 
 ```js
 // frontend: src/config/modules.js (sketch)
-'operator-data-collection': {
+operators: {
   languages: ['en-GB', 'cy'],
-  startPath: '/operator-data-collection/facilities'
+  startPath: '/operators/facilities'
 },
-'national-regulator-data-collection': {
-  languages: ['en-GB']
-  // landing page to be decided
+'national-regulators': {
+  languages: ['en-GB'],
+  startPath: '/national-regulators/home'
 }
 ```
 
@@ -186,8 +186,8 @@ flowchart TB
   LANG["Language selection"]
 
   subgraph MODS["Modules (first part of the URL)"]
-    OP["operator-data-collection<br/>English and Welsh"]
-    NR["national-regulator-data-collection<br/>English only"]
+    OP["operators<br/>English and Welsh"]
+    NR["national-regulators<br/>English only"]
   end
 
   REG --> LANG
@@ -202,8 +202,8 @@ flowchart TB
 | `/{module}` | Module entry. For now it goes to the landing page |
 | `/{module}/sign-in` | **Future scope.** `GET/POST`, not built now (section 6) |
 | `/{module}/sign-out` | **Future scope.** Not built now |
-| `/operator-data-collection/facilities` | Operator data collection landing page |
-| `/national-regulator-data-collection/...` | National Regulator data collection pages (landing page to be decided) |
+| `/operators/facilities` | Operator data collection landing page |
+| `/national-regulators/home` | National Regulator data collection landing page |
 | `/cookies`, `/health` | Shared pages, outside any module |
 
 ### 7.3 Folder structure
@@ -223,8 +223,8 @@ aqie-prtr-submissions-frontend/
         content-security-policy.js    security headers
         router.js                     registers all routes
       routes/
-        operator-data-collection/facilities/   module 1 landing page
-        national-regulator-data-collection/    module 2
+        operators/facilities/                  module 1 landing page
+        national-regulators/home/              module 2 landing page
         cookies/  health/             shared pages
       common/
         helpers/i18n.js               language support
@@ -277,8 +277,8 @@ To be decided later.
 ```mermaid
 flowchart TB
   R["Request"] --> M{"Which module?<br/>(first part of the URL)"}
-  M -->|"operator-data-collection"| W["Allowed: en-GB and cy"]
-  M -->|"national-regulator-data-collection"| E["Allowed: en-GB only"]
+  M -->|"operators"| W["Allowed: en-GB and cy"]
+  M -->|"national-regulators"| E["Allowed: en-GB only"]
   W --> C{"Welsh asked for or<br/>chosen earlier?"}
   C -->|yes| CY["Page in Welsh<br/>language switch: English"]
   C -->|no| EN["Page in English<br/>language switch: Cymraeg"]

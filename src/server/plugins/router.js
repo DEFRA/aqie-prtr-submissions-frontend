@@ -2,6 +2,8 @@ import inert from '@hapi/inert'
 
 import { health } from '../routes/health/index.js'
 import { cookies } from '../routes/cookies/controller.js'
+import { operators } from '../routes/operators/index.js'
+import { nationalRegulators } from '../routes/national-regulators/index.js'
 import { serveStaticFiles } from './serve-static-files.js'
 import { config } from '#/config/config.js'
 
@@ -14,6 +16,12 @@ export const router = {
       await server.register([health])
       // Cookie consent & policy page
       await server.register([cookies])
+
+      // Modules
+      await server.register([operators])
+      if (config.get('featureFlags.isNationalRegulatorsEnabled')) {
+        await server.register([nationalRegulators])
+      }
 
       // Static assets
       if (!config.get('isProduction') && !config.get('isTest')) {

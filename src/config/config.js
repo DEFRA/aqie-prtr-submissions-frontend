@@ -72,6 +72,14 @@ export const config = convict({
     format: Boolean,
     default: isTest
   },
+  featureFlags: {
+    isNationalRegulatorsEnabled: {
+      doc: 'Enable the national-regulators module. When false its routes are not registered and return 404',
+      format: Boolean,
+      default: false,
+      env: 'IS_NATIONAL_REGULATORS_ENABLED'
+    }
+  },
   log: {
     enabled: {
       doc: 'Is logging enabled',

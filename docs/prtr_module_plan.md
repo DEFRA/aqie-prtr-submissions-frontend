@@ -6,8 +6,8 @@ Status: planning. Last updated 2026-11-24. Nothing in this document is implement
 
 | # | Module | URL prefix (proposed) | Purpose | Built with | Welsh |
 |---|--------|-----------------------|---------|-----------|-------|
-| 1 | Operator data collection | `operator-data-collection` | Collects pollutant and waste data from operators | Mostly Defra forms | **Yes (only module with Welsh)** |
-| 2 | National Regulator data collection | `national-regulator-data-collection` | Collects data from national regulators | Mostly Defra forms (to confirm) | No |
+| 1 | Operator data collection | `operators` | Collects pollutant and waste data from operators | Mostly Defra forms | **Yes (only module with Welsh)** |
+| 2 | National Regulator data collection | `national-regulators` | Collects data from national regulators | Mostly Defra forms (to confirm) | No |
 
 More modules will be added later. The URL prefixes, the "No" for Welsh in module 2, and the detailed scope of module 2 are assumptions to confirm.
 
@@ -35,20 +35,20 @@ One config object in the frontend. URL prefixes are proposals to confirm.
 ```js
 // frontend: src/config/modules.js (sketch)
 export const modules = {
-  'operator-data-collection': {
-    prefixes: ['operator-data-collection'],
+  operators: {
+    prefixes: ['operators'],
     languages: ['en-GB', 'cy'],
-    startPath: '/operator-data-collection/facilities'
+    startPath: '/operators/facilities'
   },
-  'national-regulator-data-collection': {
-    prefixes: ['national-regulator-data-collection'],
-    languages: ['en-GB']
-    // landing page to be decided
+  'national-regulators': {
+    prefixes: ['national-regulators'],
+    languages: ['en-GB'],
+    startPath: '/national-regulators/home'
   }
 }
 ```
 
-- The Welsh switch is `languages: ['en-GB', 'cy']` on the module. It can also be driven by an environment variable (for example `WELSH_MODULES=operator-data-collection`) so Welsh can be turned on or off per environment without a code change.
+- The Welsh switch is `languages: ['en-GB', 'cy']` on the module. It can also be driven by an environment variable (for example `WELSH_MODULES=operators`) so Welsh can be turned on or off per environment without a code change.
 - When sign-in is decided, an authentication setting can be added to each entry without changing the URL shape.
 
 ## 4. Module URLs, landing pages and deferred sign-in
@@ -59,8 +59,8 @@ The module is always the **first** path segment, then the page.
 
 | URL | What it is |
 |-----|-----------|
-| `/operator-data-collection/facilities` | Module 1 landing page |
-| `/national-regulator-data-collection/...` | Module 2 pages (landing page to be decided) |
+| `/operators/facilities` | Module 1 landing page |
+| `/national-regulators/home` | Module 2 landing page |
 | `GET/POST /<module>/sign-in` | **Future scope.** Not built now (section 4.3) |
 | `/<module>/<form or page>/...` | Module pages and Defra forms |
 | `/cookies`, `/health`, `/public/...` | Shared pages and assets, outside any module |
@@ -83,13 +83,13 @@ At first these pages are blank (heading and caption only).
 
 | Module | Landing URL | Page title | Page caption |
 |--------|-------------|-----------|--------------|
-| 1 Operator data collection | `/operator-data-collection/facilities` | Facilities | Operator data collection |
-| 2 National Regulator data collection | To be decided | | National Regulator data collection |
+| 1 Operator data collection | `/operators/facilities` | Facilities | Operator data collection |
+| 2 National Regulator data collection | `/national-regulators/home` | Home | National Regulator data collection |
 
-- Each page lives in `src/server/routes/<module>/<page>/` with its own `content.js`, so the text is `t('operator-data-collection.facilities.title')` and so on.
+- Each page lives in `src/server/routes/<module>/<page>/` with its own `content.js`, so the text is `t('operators.facilities.title')` and so on.
 - Only module 1's page has an empty `cy: {}` block ready for Welsh. Module 2 has no Welsh block at all.
 - The module registry's `startPath` is the landing URL.
-- The bare module prefix (for example `/operator-data-collection`) redirects to the landing page.
+- The bare module prefix (for example `/operators`) redirects to the landing page.
 
 ### 4.3 Sign-in (deferred)
 
@@ -148,7 +148,7 @@ Pages outside any module default to English-only (decision D2).
 - Forms are hosted by `@defra/forms-engine-plugin`. Once sign-in exists, an `onRequest` hook can send unauthenticated users to the module's sign-in page. The hook must check authentication **for that module** and redirect to `/<module>/sign-in`. Until then there is no guard.
 - Form definitions for module 1 carry Welsh text in `metadata.translations.cy` (title, pages, components, list items), as in `aqie-prtr-frontend`. Module 2 definitions need no `cy` block.
 - Custom form controllers (for example dynamic radios) must use the shared language value and the shared `translate()` helper. Do not add a second `en`/`cy` mechanism.
-- A form's URL starts with its slug. If module 1 has several forms (for example `operator-data-collection` and `wastewater-transfers`), the first path segment is not one module name. See risk R1.
+- A form's URL starts with its slug. If module 1 has several forms (for example `operators` and `wastewater-transfers`), the first path segment is not one module name. See risk R1.
 
 ## 7. Delivery phases
 
@@ -186,7 +186,7 @@ Pages outside any module default to English-only (decision D2).
 |----|----------|--------|
 | D1 | Which modules does the service have? | **Decided:** two for now: Operator data collection and National Regulator data collection. More modules will be added later |
 | D2 | Language for shared pages (cookies, errors)? | Open. Suggested: English only |
-| D3 | URL prefixes | **Proposed:** `operator-data-collection`, `national-regulator-data-collection`. Need confirming |
+| D3 | URL prefixes | **Proposed:** `operators`, `national-regulators`. Need confirming |
 | D4 | Authentication flow | **Deferred.** Magic link under discussion. Not designed or built now |
 | D5 | Sign-in routes | **Decided:** `GET/POST /<module>/sign-in` stays in scope for the future (module first, page second) |
 | D6 | Which modules have Welsh? | Module 1 only. Module 2 is assumed English only. To confirm |
