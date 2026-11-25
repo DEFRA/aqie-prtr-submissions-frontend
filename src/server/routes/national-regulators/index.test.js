@@ -7,13 +7,13 @@ describe('National Regulator data collection module', () => {
   let server
 
   beforeAll(async () => {
-    config.set('featureFlags.isNationalRegulatorsEnabled', true)
+    config.set('featureFlags.nationalRegulatorsFeatureEnabled', true)
     server = await createServer()
     await server.initialize()
   })
 
   afterAll(async () => {
-    config.set('featureFlags.isNationalRegulatorsEnabled', false)
+    config.set('featureFlags.nationalRegulatorsFeatureEnabled', false)
     await server.stop({ timeout: 0 })
   })
 
@@ -59,7 +59,9 @@ describe('National Regulator data collection module feature flag off', () => {
   })
 
   test('is disabled by default', () => {
-    expect(config.get('featureFlags.isNationalRegulatorsEnabled')).toBe(false)
+    expect(config.get('featureFlags.nationalRegulatorsFeatureEnabled')).toBe(
+      false
+    )
   })
 
   test.each(['/national-regulators', '/national-regulators/home'])(

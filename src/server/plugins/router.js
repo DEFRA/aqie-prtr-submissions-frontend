@@ -19,7 +19,7 @@ export const router = {
 
       // Modules
       await server.register([operators])
-      if (config.get('featureFlags.isNationalRegulatorsEnabled')) {
+      if (config.get('featureFlags.nationalRegulatorsFeatureEnabled')) {
         await server.register([nationalRegulators])
       }
 
