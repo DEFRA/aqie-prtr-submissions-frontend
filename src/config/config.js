@@ -215,6 +215,26 @@ export const config = convict({
       default: isDevelopment
     }
   },
+  backendApi: {
+    baseUrl: {
+      doc: 'Base URL of the submissions backend API',
+      format: String,
+      default: 'http://localhost:3001',
+      env: 'BACKEND_API_BASE_URL'
+    },
+    timeout: {
+      doc: 'Backend API request timeout in milliseconds',
+      format: 'nat',
+      default: 10000,
+      env: 'BACKEND_API_TIMEOUT'
+    },
+    mockEnabled: {
+      doc: 'Return dummy data instead of calling the backend API until the endpoints are defined',
+      format: Boolean,
+      default: true,
+      env: 'BACKEND_API_MOCK_ENABLED'
+    }
+  },
   tracing: {
     header: {
       doc: 'Which header to track',

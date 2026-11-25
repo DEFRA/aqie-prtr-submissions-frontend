@@ -36,9 +36,33 @@ describe('Operator data collection module', () => {
     expect(response.request.response.source.template).toBe(
       'operators/facilities/index'
     )
-    expect($('h1').text()).toBe('Facilities')
+    expect($('h1').text()).toBe('Facilities you are responsible for')
     expect($('.govuk-caption-l').text()).toBe('Operator data collection')
-    expect($('title').text()).toContain('Facilities')
+    expect($('title').text()).toContain('Facilities you are responsible for')
     expect($('title').text()).toContain(config.get('serviceName'))
+  })
+
+  test('GET /operators/facilities lists the facilities with their status', async () => {
+    const response = await server.inject({
+      method: 'GET',
+      url: '/operators/facilities'
+    })
+    const $ = cheerio.load(response.payload)
+    const items = $('[data-testid="facilities-list"] li')
+
+    expect(items).toHaveLength(7)
+    expect(items.first().text()).toContain(
+      'Celsa Manufacturing UK Ltd, Cardiff Rod And Bar Mill'
+    )
+    expect(items.first().find('.govuk-tag--grey').text()).toBe(
+      'Wrong assignment'
+    )
+    expect(items.first().find('a')).toHaveLength(0)
+    expect(items.eq(2).find('a')).toHaveLength(1)
+    expect(items.eq(2).find('.govuk-tag--yellow').text()).toBe(
+      'Report in progress'
+    )
+    expect(items.eq(5).find('.govuk-tag')).toHaveLength(0)
+    expect(items.eq(5).text()).toContain('Not started')
   })
 })

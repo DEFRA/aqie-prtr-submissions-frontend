@@ -5,6 +5,40 @@
     <div class="govuk-grid-column-two-thirds">
       <span class="govuk-caption-l">{{ caption }}</span>
       <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
+
+      {% if facilities.length %}
+        <ul class="govuk-list" data-testid="facilities-list">
+          {% for facility in facilities %}
+            <li class="govuk-!-padding-bottom-3 govuk-!-margin-bottom-3 app-facility-item">
+              <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                  {% if facility.href %}
+                    <a class="govuk-link" href="{{ facility.href }}">{{ facility.name }}</a>
+                  {% else %}
+                    <span>{{ facility.name }}</span>
+                  {% endif %}
+                  {% if facility.hint %}
+                    <div class="govuk-hint govuk-!-margin-bottom-0">{{ facility.hint }}</div>
+                  {% endif %}
+                </div>
+                <div class="govuk-grid-column-one-third">
+                  {% if facility.tagClass %}
+                    <strong class="govuk-tag {{ facility.tagClass }}">{{ facility.statusText }}</strong>
+                  {% else %}
+                    <span>{{ facility.statusText }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="govuk-body">{{ noFacilities }}</p>
+      {% endif %}
+
+      <p class="govuk-body govuk-!-margin-top-7">
+        <a class="govuk-link" href="#">{{ missingFacilityLink }}</a>
+      </p>
     </div>
   </div>
 {% endblock %}
