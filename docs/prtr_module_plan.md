@@ -4,10 +4,10 @@ Status: planning. Last updated 2026-11-24. Nothing in this document is implement
 
 ## 1. Modules
 
-| # | Module | URL prefix (proposed) | Purpose | Built with | Welsh |
-|---|--------|-----------------------|---------|-----------|-------|
-| 1 | Operator data collection | `operators` | Collects pollutant and waste data from operators | Mostly Defra forms | **Yes (only module with Welsh)** |
-| 2 | National Regulator data collection | `national-regulators` | Collects data from national regulators | Mostly Defra forms (to confirm) | No |
+| #   | Module                             | URL prefix (proposed) | Purpose                                          | Built with                      | Welsh                            |
+| --- | ---------------------------------- | --------------------- | ------------------------------------------------ | ------------------------------- | -------------------------------- |
+| 1   | Operator data collection           | `operators`           | Collects pollutant and waste data from operators | Mostly Defra forms              | **Yes (only module with Welsh)** |
+| 2   | National Regulator data collection | `national-regulators` | Collects data from national regulators           | Mostly Defra forms (to confirm) | No                               |
 
 More modules will be added later. The URL prefixes, the "No" for Welsh in module 2, and the detailed scope of module 2 are assumptions to confirm.
 
@@ -17,8 +17,8 @@ There is no shared login module for now. Authentication (including a possible ma
 
 There is **one frontend**. It serves both modules.
 
-| Service | Role |
-|------|------|
+| Service                          | Role                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------- |
 | `aqie-prtr-submissions-frontend` | Hapi + Nunjucks frontend for **both** modules: language handling, Defra forms hosting |
 
 ## 2. Key decisions
@@ -57,13 +57,13 @@ export const modules = {
 
 The module is always the **first** path segment, then the page.
 
-| URL | What it is |
-|-----|-----------|
-| `/operators/facilities` | Module 1 landing page |
-| `/national-regulators/home` | Module 2 landing page |
-| `GET/POST /<module>/sign-in` | **Future scope.** Not built now (section 4.3) |
-| `/<module>/<form or page>/...` | Module pages and Defra forms |
-| `/cookies`, `/health`, `/public/...` | Shared pages and assets, outside any module |
+| URL                                  | What it is                                    |
+| ------------------------------------ | --------------------------------------------- |
+| `/operators/facilities`              | Module 1 landing page                         |
+| `/national-regulators/home`          | Module 2 landing page                         |
+| `GET/POST /<module>/sign-in`         | **Future scope.** Not built now (section 4.3) |
+| `/<module>/<form or page>/...`       | Module pages and Defra forms                  |
+| `/cookies`, `/health`, `/public/...` | Shared pages and assets, outside any module   |
 
 Why the module comes first (`/{module}/sign-in`, not `/sign-in/{module}`):
 
@@ -81,10 +81,10 @@ Rules:
 
 At first these pages are blank (heading and caption only).
 
-| Module | Landing URL | Page title | Page caption |
-|--------|-------------|-----------|--------------|
-| 1 Operator data collection | `/operators/facilities` | Facilities | Operator data collection |
-| 2 National Regulator data collection | `/national-regulators/home` | Home | National Regulator data collection |
+| Module                               | Landing URL                 | Page title | Page caption                       |
+| ------------------------------------ | --------------------------- | ---------- | ---------------------------------- |
+| 1 Operator data collection           | `/operators/facilities`     | Facilities | Operator data collection           |
+| 2 National Regulator data collection | `/national-regulators/home` | Home       | National Regulator data collection |
 
 - Each page lives in `src/server/routes/<module>/<page>/` with its own `content.js`, so the text is `t('operators.facilities.title')` and so on.
 - Only module 1's page has an empty `cy: {}` block ready for Welsh. Module 2 has no Welsh block at all.
@@ -153,28 +153,33 @@ Pages outside any module default to English-only (decision D2).
 ## 7. Delivery phases
 
 ### Phase 1: Module structure
+
 - [ ] Module registry in the frontend for the two modules.
 - [ ] Landing page for each module (blank placeholders), and the bare module prefix redirect.
 - [ ] Tests for each landing page.
 
 ### Phase 2: Language per module
+
 - [ ] Module-aware language plugin and context (`languageOptions` per request).
 - [ ] Welsh switch per module through the registry, with tests for the Welsh module, an English-only module, and shared pages.
 - [ ] Welsh text for the Operator data collection landing page.
 - [ ] Translator sign-off on the Welsh text.
 
 ### Phase 3: Modules 1 and 2 forms (Defra forms deferred)
+
 - [ ] Module 1 (Operator data collection) as Defra forms, with Welsh.
 - [ ] Module 2 (National Regulator data collection) as Defra forms.
 - [ ] Forms engine language hook (section 5.2, step 4).
 
 ### Phase 4: Authentication (deferred)
+
 - [ ] Decide the sign-in flow (magic link under discussion).
 - [ ] `GET/POST /<module>/sign-in` for each module, per-module session auth state, session regeneration, safe `returnUrl`.
 - [ ] Guard on module pages and the Defra forms `onRequest` hook.
 - [ ] Tests: each module's sign-in, wrong module redirect, redirect after sign-in.
 
 ### Phase 5: Hardening and deployment
+
 - [ ] Production secrets, CDP proxy, separate keys per environment.
 - [ ] Rate limiting once sign-in exists.
 - [ ] Accessibility review (error summary, focus, `lang` attributes).
@@ -182,30 +187,30 @@ Pages outside any module default to English-only (decision D2).
 
 ## 8. Decisions
 
-| ID | Question | Status |
-|----|----------|--------|
-| D1 | Which modules does the service have? | **Decided:** two for now: Operator data collection and National Regulator data collection. More modules will be added later |
-| D2 | Language for shared pages (cookies, errors)? | Open. Suggested: English only |
-| D3 | URL prefixes | **Proposed:** `operators`, `national-regulators`. Need confirming |
-| D4 | Authentication flow | **Deferred.** Magic link under discussion. Not designed or built now |
-| D5 | Sign-in routes | **Decided:** `GET/POST /<module>/sign-in` stays in scope for the future (module first, page second) |
-| D6 | Which modules have Welsh? | Module 1 only. Module 2 is assumed English only. To confirm |
-| D7 | Data design | **To be decided later** |
-| D8 | Notify | Open. Only needed if the sign-in flow sends email |
-| D9 | How users are linked to facilities | Open. Depends on the authentication decision |
-| D10 | Scope of module 2 | Open. Users, pages and data are not defined yet |
+| ID  | Question                                     | Status                                                                                                                      |
+| --- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| D1  | Which modules does the service have?         | **Decided:** two for now: Operator data collection and National Regulator data collection. More modules will be added later |
+| D2  | Language for shared pages (cookies, errors)? | Open. Suggested: English only                                                                                               |
+| D3  | URL prefixes                                 | **Proposed:** `operators`, `national-regulators`. Need confirming                                                           |
+| D4  | Authentication flow                          | **Deferred.** Magic link under discussion. Not designed or built now                                                        |
+| D5  | Sign-in routes                               | **Decided:** `GET/POST /<module>/sign-in` stays in scope for the future (module first, page second)                         |
+| D6  | Which modules have Welsh?                    | Module 1 only. Module 2 is assumed English only. To confirm                                                                 |
+| D7  | Data design                                  | **To be decided later**                                                                                                     |
+| D8  | Notify                                       | Open. Only needed if the sign-in flow sends email                                                                           |
+| D9  | How users are linked to facilities           | Open. Depends on the authentication decision                                                                                |
+| D10 | Scope of module 2                            | Open. Users, pages and data are not defined yet                                                                             |
 
 ## 9. Risks
 
-| ID | Risk | Mitigation |
-|----|------|------------|
-| R1 | Defra forms use their own slug as the first URL segment, so one module may span several prefixes | List all prefixes per module in the registry (as sketched), or check whether the forms engine can be mounted under one route prefix |
-| R2 | The forms engine's `getLanguage(query, yar)` has no request, so it cannot see the module | Use the effective-language session key described in 5.2 |
-| R3 | Welsh text missing on some Welsh-module pages shows English under `<html lang="cy">` | Translate every page of the module before enabling, add a test that fails when a page has no Welsh strings |
-| R4 | No authentication while sign-in is deferred, so module pages are open | Development only. Do not release before sign-in is built |
-| R5 | Scope of module 2 is not defined, so structure and data may change | Keep the registry and landing pages minimal until the scope is agreed |
-| R6 | A Defra form is served at `/{slug}/{path}`, so a form page called `sign-in` or `sign-out` would clash with the future sign-in routes when the slug equals the module prefix | Reserve those two page names, and add a test that fails if a form definition uses them |
-| R7 | The sign-in decision (magic link) may change the URL shape or how users link to facilities | Keep modules independent of the sign-in design, and keep the registry open for an authentication setting |
+| ID  | Risk                                                                                                                                                                        | Mitigation                                                                                                                          |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | Defra forms use their own slug as the first URL segment, so one module may span several prefixes                                                                            | List all prefixes per module in the registry (as sketched), or check whether the forms engine can be mounted under one route prefix |
+| R2  | The forms engine's `getLanguage(query, yar)` has no request, so it cannot see the module                                                                                    | Use the effective-language session key described in 5.2                                                                             |
+| R3  | Welsh text missing on some Welsh-module pages shows English under `<html lang="cy">`                                                                                        | Translate every page of the module before enabling, add a test that fails when a page has no Welsh strings                          |
+| R4  | No authentication while sign-in is deferred, so module pages are open                                                                                                       | Development only. Do not release before sign-in is built                                                                            |
+| R5  | Scope of module 2 is not defined, so structure and data may change                                                                                                          | Keep the registry and landing pages minimal until the scope is agreed                                                               |
+| R6  | A Defra form is served at `/{slug}/{path}`, so a form page called `sign-in` or `sign-out` would clash with the future sign-in routes when the slug equals the module prefix | Reserve those two page names, and add a test that fails if a form definition uses them                                              |
+| R7  | The sign-in decision (magic link) may change the URL shape or how users link to facilities                                                                                  | Keep modules independent of the sign-in design, and keep the registry open for an authentication setting                            |
 
 ## 10. Test plan summary
 
