@@ -1,4 +1,5 @@
 import { config } from '#/config/config.js'
+import { statusCodes } from '#/server/common/constants/status-codes.js'
 import { apiMocks } from './api-mocks.js'
 
 export class ApiError extends Error {
@@ -18,7 +19,10 @@ export async function callApi(path, { method = 'GET', body, headers } = {}) {
   if (config.get('backendApi.mockEnabled')) {
     const mock = apiMocks[`${method} ${path}`]
     if (!mock) {
-      throw new ApiError(`No mock defined for ${method} ${path}`, 501)
+      throw new ApiError(
+        `No mock defined for ${method} ${path}`,
+        statusCodes.notImplemented
+      )
     }
     return mock(body)
   }
@@ -37,7 +41,7 @@ export async function callApi(path, { method = 'GET', body, headers } = {}) {
     )
   }
 
-  return response.status === 204 ? null : response.json()
+  return response.status === statusCodes.noContent ? null : response.json()
 }
 
 export const api = {
