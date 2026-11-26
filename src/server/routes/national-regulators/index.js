@@ -11,7 +11,7 @@ export const nationalRegulators = {
         {
           method: 'GET',
           path: `/${prefix}`,
-          handler: (request, h) => h.redirect(modules[prefix].startPath)
+          handler: (_request, h) => h.redirect(modules[prefix].startPath)
         },
         {
           method: 'GET',
