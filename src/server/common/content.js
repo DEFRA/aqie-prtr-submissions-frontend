@@ -1,4 +1,8 @@
 export const content = {
-  'en-GB': {},
-  cy: {}
+  'en-GB': {
+    errorSummaryTitle: 'There is a problem'
+  },
+  cy: {
+    errorSummaryTitle: 'Mae problem'
+  }
 }
