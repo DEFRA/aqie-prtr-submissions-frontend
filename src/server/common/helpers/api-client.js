@@ -14,8 +14,7 @@ export class ApiError extends Error {
  * Returns dummy data from api-mocks.js while `backendApi.mockEnabled` is true.
  */
 export async function callApi(path, { method = 'GET', body, headers } = {}) {
-
-    // remove this mock code when real api is there 
+  // remove this mock code when real api is there
   if (config.get('backendApi.mockEnabled')) {
     const mock = apiMocks[`${method} ${path}`]
     if (!mock) {

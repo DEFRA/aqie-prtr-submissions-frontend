@@ -51,10 +51,7 @@ describe('api client', () => {
 
   test('returns null for a 204 response', async () => {
     config.set('backendApi.mockEnabled', false)
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: true, status: 204 })
-    )
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, status: 204 }))
 
     await expect(api.get('/facilities')).resolves.toBeNull()
   })
