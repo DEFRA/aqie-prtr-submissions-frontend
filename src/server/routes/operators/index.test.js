@@ -64,6 +64,28 @@ describe('Operator data collection module', () => {
     expect(items.eq(3).find('.govuk-tag')).toHaveLength(0)
     expect(items.eq(3).text()).toContain('Not started')
     expect(items.eq(4).find('.govuk-tag--green').text()).toBe('Report approved')
+    expect($('.govuk-back-link')).toHaveLength(0)
+  })
+
+  test('a back link with browserBack false goes to its fixed URL', async () => {
+    server.route({
+      method: 'GET',
+      path: '/test-fixed-back-link',
+      handler: (_request, h) =>
+        h.view('operators/missing-facility/index', {
+          pageTitle: 'Test',
+          backLink: { href: '/fixed-url', browserBack: false }
+        })
+    })
+
+    const response = await server.inject({
+      method: 'GET',
+      url: '/test-fixed-back-link'
+    })
+    const $ = cheerio.load(response.payload)
+
+    expect($('.govuk-back-link').attr('href')).toBe('/fixed-url')
+    expect($('.govuk-back-link').attr('data-module')).toBeUndefined()
   })
 
   test('GET /operators/facilities shows the two help links in order', async () => {
@@ -111,6 +133,8 @@ describe('Operator data collection module', () => {
       'Give them the details of any additional facilities you need to report PRTR data for.'
     )
     expect($('.govuk-back-link').attr('href')).toBe('/operators/facilities')
+    expect($('.govuk-back-link').text()).toBe('Back')
+    expect($('.govuk-back-link').attr('data-module')).toBe('app-back-link')
     expect($('main a.govuk-link[href="/operators/facilities"]').text()).toBe(
       'Return to facilities'
     )

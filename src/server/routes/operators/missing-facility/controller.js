@@ -1,6 +1,7 @@
 import { DEFAULT_LANG, translate } from '#/server/common/helpers/i18n.js'
 
 const TEXT = 'operators.missing-facility'
+const FACILITIES_PATH = '/operators/facilities'
 
 export const missingFacilityController = {
   handler(request, h) {
@@ -8,10 +9,10 @@ export const missingFacilityController = {
 
     return h.view('operators/missing-facility/index', {
       pageTitle: translate(language, `${TEXT}.title`),
-      back: translate(language, `${TEXT}.back`),
+      backLink: { href: FACILITIES_PATH },
       body: translate(language, `${TEXT}.body`),
       returnLink: translate(language, `${TEXT}.returnLink`),
-      facilitiesPath: '/operators/facilities'
+      facilitiesPath: FACILITIES_PATH
     })
   }
 }

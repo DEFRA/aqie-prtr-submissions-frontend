@@ -1,13 +1,5 @@
 {% extends 'layouts/page.njk' %}
 
-{% block beforeContent %}
-  {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-  {{ govukBackLink({
-    text: back,
-    href: facilitiesPath
-  }) }}
-{% endblock %}
-
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

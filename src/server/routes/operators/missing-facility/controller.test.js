@@ -10,7 +10,7 @@ describe('missing facility controller', () => {
     expect(template).toBe('operators/missing-facility/index')
     expect(context).toEqual({
       pageTitle: 'Contact your Regulator about the missing facility',
-      back: 'Back',
+      backLink: { href: '/operators/facilities' },
       body: 'Give them the details of any additional facilities you need to report PRTR data for.',
       returnLink: 'Return to facilities',
       facilitiesPath: '/operators/facilities'
@@ -25,7 +25,7 @@ describe('missing facility controller', () => {
 
     expect(context).toEqual({
       pageTitle: 'Contact your Regulator about the missing facility --CY',
-      back: 'Back',
+      backLink: { href: '/operators/facilities' },
       body: 'Give them the details of any additional facilities you need to report PRTR data for. --CY',
       returnLink: 'Return to facilities --CY',
       facilitiesPath: '/operators/facilities'
