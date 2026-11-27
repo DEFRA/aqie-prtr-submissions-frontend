@@ -5,5 +5,10 @@ export const content = {
     body: 'Give them the details of any additional facilities you need to report PRTR data for.',
     returnLink: 'Return to facilities'
   },
-  cy: {}
+  cy: {
+    back: 'Back',
+    title: 'Contact your Regulator about the missing facility --CY',
+    body: 'Give them the details of any additional facilities you need to report PRTR data for. --CY',
+    returnLink: 'Return to facilities --CY'
+  }
 }
