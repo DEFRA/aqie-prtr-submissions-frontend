@@ -1,9 +1,9 @@
 import inert from '@hapi/inert'
 
-import { home } from '../routes/home/index.js'
-import { about } from '../routes/about/index.js'
 import { health } from '../routes/health/index.js'
 import { cookies } from '../routes/cookies/controller.js'
+import { operators } from '../routes/operators/index.js'
+import { nationalRegulators } from '../routes/national-regulators/index.js'
 import { serveStaticFiles } from './serve-static-files.js'
 import { config } from '#/config/config.js'
 
@@ -17,8 +17,11 @@ export const router = {
       // Cookie consent & policy page
       await server.register([cookies])
 
-      // Application specific routes, add your own routes here
-      await server.register([home, about])
+      // Modules
+      await server.register([operators])
+      if (config.get('featureFlags.nationalRegulatorsFeatureEnabled')) {
+        await server.register([nationalRegulators])
+      }
 
       // Static assets
       if (!config.get('isProduction') && !config.get('isTest')) {

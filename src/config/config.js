@@ -72,6 +72,14 @@ export const config = convict({
     format: Boolean,
     default: isTest
   },
+  featureFlags: {
+    nationalRegulatorsFeatureEnabled: {
+      doc: 'Enable the national-regulators module. When false its routes are not registered and return 404',
+      format: Boolean,
+      default: false,
+      env: 'NATIONAL_REGULATORS_FEATURE_ENABLED'
+    }
+  },
   log: {
     enabled: {
       doc: 'Is logging enabled',
@@ -205,6 +213,26 @@ export const config = convict({
       doc: 'Use a cache and recompile templates each time',
       format: Boolean,
       default: isDevelopment
+    }
+  },
+  backendApi: {
+    baseUrl: {
+      doc: 'Base URL of the submissions backend API',
+      format: String,
+      default: 'http://localhost:3001',
+      env: 'BACKEND_URL'
+    },
+    timeout: {
+      doc: 'Backend API request timeout in milliseconds',
+      format: 'nat',
+      default: 10000,
+      env: 'BACKEND_API_TIMEOUT'
+    },
+    mockEnabled: {
+      doc: 'Return dummy data instead of calling the backend API until the endpoints are defined',
+      format: Boolean,
+      default: true,
+      env: 'BACKEND_API_MOCK_ENABLED'
     }
   },
   tracing: {

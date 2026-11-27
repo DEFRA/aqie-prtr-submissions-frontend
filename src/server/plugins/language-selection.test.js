@@ -23,34 +23,34 @@ describe('#languageSelection', () => {
       .join('; ')
 
   test('Should default to English', async () => {
-    const response = await get('/')
+    const response = await get('/cookies')
 
     expect(response.payload).toContain('<html lang="en-GB"')
     expect(response.payload).toContain('href="?language=cy"')
   })
 
   test('Should switch to Welsh with ?language=cy and offer English', async () => {
-    const response = await get('/?language=cy')
+    const response = await get('/cookies?language=cy')
 
     expect(response.payload).toContain('<html lang="cy"')
     expect(response.payload).toContain('href="?language=en-GB"')
   })
 
   test('Should remember the language in the session', async () => {
-    const first = await get('/?language=cy')
-    const second = await get('/', cookieFrom(first))
+    const first = await get('/cookies?language=cy')
+    const second = await get('/cookies', cookieFrom(first))
 
     expect(second.payload).toContain('<html lang="cy"')
   })
 
   test('Should ignore an unsupported language', async () => {
-    const response = await get('/?language=fr')
+    const response = await get('/cookies?language=fr')
 
     expect(response.payload).toContain('<html lang="en-GB"')
   })
 
   test('Should ignore the old ?lang= parameter', async () => {
-    const response = await get('/?lang=cy')
+    const response = await get('/cookies?lang=cy')
 
     expect(response.payload).toContain('<html lang="en-GB"')
   })
