@@ -220,7 +220,7 @@ export const config = convict({
       doc: 'Base URL of the submissions backend API',
       format: String,
       default: 'http://localhost:3001',
-      env: 'BACKEND_API_BASE_URL'
+      env: 'BACKEND_URL'
     },
     timeout: {
       doc: 'Backend API request timeout in milliseconds',
