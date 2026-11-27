@@ -50,20 +50,36 @@ describe('Operator data collection module', () => {
     const $ = cheerio.load(response.payload)
     const items = $('[data-testid="facilities-list"] li')
 
-    expect(items).toHaveLength(7)
+    expect(items).toHaveLength(5)
     expect(items.first().text()).toContain(
-      'Celsa Manufacturing UK Ltd, Cardiff Rod And Bar Mill'
+      'Celsa Manufacturing (UK) Limited, Tremorfa Melt Shop'
     )
-    expect(items.first().find('.govuk-tag--grey').text()).toBe(
-      'Wrong assignment'
-    )
-    expect(items.first().find('a')).toHaveLength(0)
-    expect(items.eq(2).find('a')).toHaveLength(1)
-    expect(items.eq(2).find('.govuk-tag--yellow').text()).toBe(
+    expect(items.first().find('a')).toHaveLength(1)
+    expect(items.first().find('.govuk-tag--yellow').text()).toBe(
       'Report in progress'
     )
-    expect(items.eq(5).find('.govuk-tag')).toHaveLength(0)
-    expect(items.eq(5).text()).toContain('Not started')
+    expect(items.eq(1).find('a')).toHaveLength(0)
+    expect(items.eq(1).find('.govuk-tag--blue').text()).toBe('Report submitted')
+    expect(items.eq(2).find('.govuk-tag--red').text()).toBe('Report rejected')
+    expect(items.eq(3).find('.govuk-tag')).toHaveLength(0)
+    expect(items.eq(3).text()).toContain('Not started')
+    expect(items.eq(4).find('.govuk-tag--green').text()).toBe('Report approved')
+  })
+
+  test('GET /operators/facilities shows the two help links in order', async () => {
+    const response = await server.inject({
+      method: 'GET',
+      url: '/operators/facilities'
+    })
+    const $ = cheerio.load(response.payload)
+    const links = $('main p.govuk-body > a.govuk-link')
+      .map((_i, el) => $(el).text())
+      .get()
+
+    expect(links).toEqual([
+      'Tell us about a missing facility',
+      'Tell us about a facility you are not responsible for'
+    ])
   })
 
   test('GET /operators/facilities links to the missing facility page', async () => {

@@ -24,19 +24,25 @@ describe('facilities controller', () => {
       pageTitle: 'Facilities you are responsible for',
       caption: 'Operator data collection',
       missingFacilityLink: 'Tell us about a missing facility',
+      facilityYouAreNoteResponsible:
+        'Tell us about a facility you are not responsible for',
       facilities: []
     })
   })
 
   test('falls back to English when the request has no language', async () => {
-    const { context } = await renderWith([], { app: { language: 'cy' } })
+    const { context } = await renderWith([], {})
 
     expect(context.pageTitle).toBe('Facilities you are responsible for')
   })
 
+  test('uses the Welsh text when the request language is cy', async () => {
+    const { context } = await renderWith([], { app: { language: 'cy' } })
+
+    expect(context.pageTitle).toBe('Facilities you are responsible for --CY')
+  })
+
   test.each([
-    ['wrong-assignment', 'govuk-tag--grey', null],
-    ['zero-return-submitted', 'govuk-tag--blue', null],
     ['report-in-progress', 'govuk-tag--yellow', '#'],
     ['report-submitted', 'govuk-tag--blue', null],
     ['report-rejected', 'govuk-tag--red', '#'],
@@ -52,16 +58,20 @@ describe('facilities controller', () => {
     })
   })
 
-  test('adds the removal hint only for wrong assignments', async () => {
+  test('translates the status text for each facility', async () => {
     const { context } = await renderWith([
-      { id: '1', name: 'A', status: 'wrong-assignment' },
+      { id: '1', name: 'A', status: 'report-in-progress' },
       { id: '2', name: 'B', status: 'not-started' }
     ])
 
-    expect(context.facilities[0].hint).toBe(
-      'You will be contacted when this facility has been removed from your list'
-    )
-    expect(context.facilities[1].hint).toBeNull()
+    expect(context.facilities.map((facility) => facility.statusText)).toEqual([
+      'Report in progress',
+      'Not started'
+    ])
+    expect(context.facilities.map((facility) => facility.hint)).toEqual([
+      null,
+      null
+    ])
   })
 
   test('propagates errors from the service', async () => {

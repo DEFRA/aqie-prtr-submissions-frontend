@@ -42,6 +42,10 @@ export const facilitiesController = {
       pageTitle: translate(language, `${TEXT}.title`),
       caption: translate(language, `${TEXT}.caption`),
       missingFacilityLink: translate(language, `${TEXT}.missingFacilityLink`),
+      facilityYouAreNoteResponsible: translate(
+        language,
+        `${TEXT}.facilityYouAreNoteResponsible`
+      ),
       noFacilities: translate(language, `${TEXT}.noFacilities`),
       facilities: facilities.map((facility) => toViewModel(facility, language))
     })

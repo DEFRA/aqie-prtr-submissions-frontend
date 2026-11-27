@@ -2,16 +2,6 @@
 export const apiMocks = {
   'GET /facilities': () => [
     {
-      id: 'f-001',
-      name: 'Celsa Manufacturing UK Ltd, Cardiff Rod And Bar Mill',
-      status: 'wrong-assignment'
-    },
-    {
-      id: 'f-002',
-      name: 'Celsa Manufacturing (UK) Limited, Section Mill',
-      status: 'zero-return-submitted'
-    },
-    {
       id: 'f-003',
       name: 'Celsa Manufacturing (UK) Limited, Tremorfa Melt Shop',
       status: 'report-in-progress'
