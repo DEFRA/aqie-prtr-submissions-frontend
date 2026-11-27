@@ -2,6 +2,7 @@
 
 {# Import GOVUK components globally #}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
 {# Import custom components globally #}
@@ -72,6 +73,14 @@
 {% endblock %}
 
 {% block beforeContent %}
+  {# backLink: { href } acts as browser back with JavaScript and links to href without it; add browserBack: false to always go to href #}
+  {% if backLink %}
+    {{ govukBackLink({
+      text: t('common.back'),
+      href: backLink.href or serviceUrl,
+      attributes: {} if backLink.browserBack === false else { 'data-module': 'app-back-link' }
+    }) }}
+  {% endif %}
   {% if breadcrumbs.length > 1 %}
     {{ govukBreadcrumbs({
       items: breadcrumbs
