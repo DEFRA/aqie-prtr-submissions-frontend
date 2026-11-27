@@ -1,5 +1,6 @@
 import { modules } from '#/config/modules.js'
 import { facilitiesController } from './facilities/controller.js'
+import { missingFacilityController } from './missing-facility/controller.js'
 
 const prefix = 'operators'
 
@@ -17,6 +18,11 @@ export const operators = {
           method: 'GET',
           path: `/${prefix}/facilities`,
           ...facilitiesController
+        },
+        {
+          method: 'GET',
+          path: `/${prefix}/facilities/missing`,
+          ...missingFacilityController
         }
       ])
     }

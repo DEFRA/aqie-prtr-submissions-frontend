@@ -23,7 +23,7 @@ describe('facilities controller', () => {
     expect(context).toMatchObject({
       pageTitle: 'Facilities you are responsible for',
       caption: 'Operator data collection',
-      missingFacilityLink: 'Is there a facility missing?',
+      missingFacilityLink: 'Tell us about a missing facility',
       facilities: []
     })
   })

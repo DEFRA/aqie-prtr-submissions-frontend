@@ -2,7 +2,7 @@ export const content = {
   'en-GB': {
     title: 'Facilities you are responsible for',
     caption: 'Operator data collection',
-    missingFacilityLink: 'Is there a facility missing?',
+    missingFacilityLink: 'Tell us about a missing facility',
     noFacilities: 'There are no facilities assigned to you.',
     wrongAssignmentHint:
       'You will be contacted when this facility has been removed from your list',
